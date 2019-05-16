@@ -1,7 +1,9 @@
 #The COPYRIGHT file at the top level of this repository contains the full
 #copyright notices and license terms.
-from trytond.model import ModelSQL, ValueMixin, fields
+from trytond.model import ModelSQL, fields
 from trytond.pool import Pool, PoolMeta
+from trytond.modules.company.model import (
+    CompanyMultiValueMixin, CompanyValueMixin)
 
 __all__ = ['Configuration', 'ConfigurationRemainingStock']
 
@@ -20,8 +22,7 @@ def default_func(field_name):
     return default
 
 
-class Configuration:
-    __metaclass__ = PoolMeta
+class Configuration(CompanyMultiValueMixin, metaclass=PoolMeta):
     __name__ = 'sale.configuration'
     remaining_stock = fields.MultiValue(remaining_stock)
 
@@ -35,7 +36,7 @@ class Configuration:
     default_remaining_stock = default_func('remaining_stock')
 
 
-class ConfigurationRemainingStock(ModelSQL, ValueMixin):
+class ConfigurationRemainingStock(ModelSQL, CompanyValueMixin):
     "Sale Configuration Remaining Stock"
     __name__ = 'sale.configuration.remaining.stock'
     remaining_stock = remaining_stock

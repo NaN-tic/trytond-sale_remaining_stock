@@ -22,8 +22,7 @@ def default_func(field_name):
     return default
 
 
-class Party(CompanyMultiValueMixin):
-    __metaclass__ = PoolMeta
+class Party(CompanyMultiValueMixin, metaclass=PoolMeta):
     __name__ = 'party.party'
     remaining_stock = fields.MultiValue(remaining_stock)
     remaining_stocks = fields.One2Many(
