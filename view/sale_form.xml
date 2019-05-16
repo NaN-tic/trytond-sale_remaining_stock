@@ -1,0 +1,9 @@
+<?xml version="1.0"?>
+<!-- The COPYRIGHT file at the top level of this repository contains the full
+     copyright notices and license terms. -->
+<data>
+    <xpath expr="/form/notebook/page[@id='other']/field[@name='shipment_method']" position="after">
+        <label name="remaining_stock"/>
+        <field name="remaining_stock"/>
+    </xpath>
+</data>

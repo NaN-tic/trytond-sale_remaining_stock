@@ -1,0 +1,139 @@
+#
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:party.party,remaining_stock:"
+msgid "Remaining Stock"
+msgstr "Stock restante"
+
+msgctxt "field:party.remaining.stock,create_date:"
+msgid "Create Date"
+msgstr "Fecha de creación"
+
+msgctxt "field:party.remaining.stock,create_uid:"
+msgid "Create User"
+msgstr "Usuario de creación"
+
+msgctxt "field:party.remaining.stock,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:party.remaining.stock,rec_name:"
+msgid "Record Name"
+msgstr "Nombre del registro"
+
+msgctxt "field:party.remaining.stock,remaining_stock:"
+msgid "Remaining Stock"
+msgstr "Stock restante"
+
+msgctxt "field:party.remaining.stock,write_date:"
+msgid "Write Date"
+msgstr "Fecha de modificación"
+
+msgctxt "field:party.remaining.stock,write_uid:"
+msgid "Write User"
+msgstr "Usuario de modificación"
+
+msgctxt "field:sale.configuration,remaining_stock:"
+msgid "Remaining Stock"
+msgstr "Stock restante"
+
+msgctxt "field:sale.configuration.remaining.stock,create_date:"
+msgid "Create Date"
+msgstr "Fecha de creación"
+
+msgctxt "field:sale.configuration.remaining.stock,create_uid:"
+msgid "Create User"
+msgstr "Usuario de creación"
+
+msgctxt "field:sale.configuration.remaining.stock,id:"
+msgid "ID"
+msgstr "ID"
+
+msgctxt "field:sale.configuration.remaining.stock,rec_name:"
+msgid "Record Name"
+msgstr "Nombre del registro"
+
+msgctxt "field:sale.configuration.remaining.stock,remaining_stock:"
+msgid "Remaining Stock"
+msgstr "Stock restante"
+
+msgctxt "field:sale.configuration.remaining.stock,write_date:"
+msgid "Write Date"
+msgstr "Fecha de modificación"
+
+msgctxt "field:sale.configuration.remaining.stock,write_uid:"
+msgid "Write User"
+msgstr "Usuario de modificación"
+
+msgctxt "field:sale.sale,remaining_stock:"
+msgid "Remaining Stock"
+msgstr "Stock restante"
+
+msgctxt "help:party.party,remaining_stock:"
+msgid "Allow create new pending shipments to delivey"
+msgstr "Permitir crear nuevos albaranes pendientes de la nueva entrega"
+
+msgctxt "help:party.remaining.stock,remaining_stock:"
+msgid "Allow create new pending shipments to delivey"
+msgstr "Permitir crear nuevos albaranes pendientes de la nueva entrega"
+
+msgctxt "help:sale.configuration,remaining_stock:"
+msgid "Allow create new pending shipments to delivey"
+msgstr "Permitir crear nuevos albaranes pendientes de la nueva entrega"
+
+msgctxt "help:sale.configuration.remaining.stock,remaining_stock:"
+msgid "Allow create new pending shipments to delivey"
+msgstr "Permitir crear nuevos albaranes pendientes de la nueva entrega"
+
+msgctxt "help:sale.sale,remaining_stock:"
+msgid "Allow create new pending shipments to delivey"
+msgstr "Permitir crear nuevos albaranes pendientes de la nueva entrega"
+
+msgctxt "model:party.remaining.stock,name:"
+msgid "Party Remaining Stock"
+msgstr "Tercero stock restante"
+
+msgctxt "model:sale.configuration.remaining.stock,name:"
+msgid "Sale Configuration Remaining Stock"
+msgstr "Configuración venta stock restante"
+
+msgctxt "selection:party.party,remaining_stock:"
+msgid "Create Shipment"
+msgstr "Crear albaranes"
+
+msgctxt "selection:party.party,remaining_stock:"
+msgid "Manual"
+msgstr "Manual"
+
+msgctxt "selection:party.remaining.stock,remaining_stock:"
+msgid "Create Shipment"
+msgstr "Crear albaranes"
+
+msgctxt "selection:party.remaining.stock,remaining_stock:"
+msgid "Manual"
+msgstr "Manual"
+
+msgctxt "selection:sale.configuration,remaining_stock:"
+msgid "Create Shipment"
+msgstr "Crear albaranes"
+
+msgctxt "selection:sale.configuration,remaining_stock:"
+msgid "Manual"
+msgstr "Manual"
+
+msgctxt "selection:sale.configuration.remaining.stock,remaining_stock:"
+msgid "Create Shipment"
+msgstr "Crear albaranes"
+
+msgctxt "selection:sale.configuration.remaining.stock,remaining_stock:"
+msgid "Manual"
+msgstr "Manual"
+
+msgctxt "selection:sale.sale,remaining_stock:"
+msgid "Create Shipment"
+msgstr "Crear albaranes"
+
+msgctxt "selection:sale.sale,remaining_stock:"
+msgid "Manual"
+msgstr "Manual"
