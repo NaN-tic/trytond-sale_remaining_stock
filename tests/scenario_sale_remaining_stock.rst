@@ -156,6 +156,7 @@ Sale create shipments::
     >>> shipment.click('wait')
     >>> shipment.click('assign_try')
     True
+    >>> shipment.click('pick')
     >>> shipment.click('pack')
     >>> shipment.click('done')
     >>> sale.reload()
@@ -193,6 +194,7 @@ Sale manual shipments::
     >>> shipment.click('wait')
     >>> shipment.click('assign_try')
     True
+    >>> shipment.click('pick')
     >>> shipment.click('pack')
     >>> shipment.click('done')
     >>> sale.reload()
