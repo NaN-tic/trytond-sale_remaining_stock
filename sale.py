@@ -50,10 +50,10 @@ class Sale(metaclass=PoolMeta):
         # Consider as sent if ANY shipment is done
         if (self.moves and self.remaining_stock == 'manual'):
             if (self.shipments and self.shipment_returns):
-                if (any(s for s in self.shipments if s.state == 'done') and
-                        all(s.state in ('received', 'done') for s in self.shipment_returns)):
+                if (any(s for s in self.shipments if s.state in ('done', 'cancelled')) and
+                        all(s.state in ('received', 'done', 'cancelled') for s in self.shipment_returns)):
                     return 'sent'
             elif self.shipments:
-                if any(s for s in self.shipments if s.state == 'done'):
+                if any(s for s in self.shipments if s.state in ('done', 'cancelled')):
                     return 'sent'
         return super(Sale, self).get_shipment_state()
