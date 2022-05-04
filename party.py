@@ -4,6 +4,7 @@ from trytond.model import ModelSQL, fields
 from trytond.modules.company.model import (CompanyMultiValueMixin,
     CompanyValueMixin)
 from trytond.pool import Pool, PoolMeta
+from trytond.pyson import Eval
 
 __all__ = ['Party', 'PartyRemainingStock']
 
@@ -41,7 +42,10 @@ class Party(CompanyMultiValueMixin, metaclass=PoolMeta):
 class PartyRemainingStock(ModelSQL, CompanyValueMixin):
     "Party Remaining Stock"
     __name__ = 'party.remaining.stock'
-    party = fields.Many2One('party.party', 'Party')
+    party = fields.Many2One('party.party', 'Party', context={
+            'company': Eval('company'),
+            },
+        depends=['company'])
     remaining_stock = remaining_stock
 
     @classmethod
