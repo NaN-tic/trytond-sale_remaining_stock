@@ -43,7 +43,7 @@ class PartyRemainingStock(ModelSQL, CompanyValueMixin):
     "Party Remaining Stock"
     __name__ = 'party.remaining.stock'
     party = fields.Many2One('party.party', 'Party', context={
-            'company': Eval('company'),
+            'company': Eval('company', -1),
             },
         depends=['company'])
     remaining_stock = remaining_stock
