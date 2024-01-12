@@ -15,9 +15,7 @@ class Sale(metaclass=PoolMeta):
             ], 'Remaining Stock',
         states={
             'readonly': ~Eval('state').in_(['draft', 'quotation']),
-            },
-        depends=['state'],
-        help='Allow create new pending shipments to delivery')
+            }, help='Allow create new pending shipments to delivery')
 
     @classmethod
     def default_remaining_stock(cls):
