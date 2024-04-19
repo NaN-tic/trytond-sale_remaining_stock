@@ -157,7 +157,7 @@ Sale create shipments::
     >>> shipment.click('assign_try')
     >>> shipment.click('pick')
     >>> shipment.click('pack')
-    >>> shipment.click('done')
+    >>> shipment.click('do')
     >>> sale.reload()
     >>> len(sale.shipments) == 2
     True
@@ -194,7 +194,7 @@ Sale manual shipments::
     >>> shipment.click('assign_try')
     >>> shipment.click('pick')
     >>> shipment.click('pack')
-    >>> shipment.click('done')
+    >>> shipment.click('do')
     >>> sale.reload()
     >>> len(sale.shipments) == 1
     True
