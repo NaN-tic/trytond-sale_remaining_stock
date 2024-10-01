@@ -14,3 +14,7 @@ def register():
         party.PartyRemainingStock,
         sale.Sale,
         module='sale_remaining_stock', type_='model')
+    Pool.register(
+        sale.LineCreditLimit,
+        depends=['sale_credit_limit'],
+        module='sale_remaining_stock', type_='model')

@@ -4,8 +4,6 @@ from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
 
-__all__ = ['Sale']
-
 
 class Sale(metaclass=PoolMeta):
     __name__ = 'sale.sale'
@@ -55,3 +53,20 @@ class Sale(metaclass=PoolMeta):
                 if any(s for s in self.shipments if s.state in ('done', 'cancelled')):
                     return 'sent'
         return super(Sale, self).get_shipment_state()
+
+
+class LineCreditLimit(metaclass=PoolMeta):
+    __name__ = 'sale.line'
+
+    @property
+    def credit_limit_quantity(self):
+        quantity = super().credit_limit_quantity
+        # The quantity comes from the invoiced line.
+        # In cases where remaining_stock is manual, there are no stock.move exceptions.
+        # However, sale_credit_limit requires these moves to deduct the quantity,
+        # even though they are not finally invoiced.
+        if (quantity is not None
+                and self.sale.shipment_state == 'sent'
+                and self.sale.remaining_stock == 'manual'):
+            quantity = sum(i.quantity for i in self.invoice_lines)
+        return quantity
