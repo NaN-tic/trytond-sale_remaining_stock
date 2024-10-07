@@ -39,12 +39,12 @@ class Sale(metaclass=PoolMeta):
             self.remaining_stock = (self.party.remaining_stock
                 if self.party.remaining_stock else remaining_stock)
 
-    def create_shipment(self, shipment_type):
-        # in case remaining_stock is manual, not create new shipments
-        if self.remaining_stock == 'manual':
-            if (shipment_type == 'out' and self.shipments):
-                return
-        return super(Sale, self).create_shipment(shipment_type)
+    # def create_shipment(self, shipment_type):
+    #     # in case remaining_stock is manual, not create new shipments
+    #     if self.remaining_stock == 'manual':
+    #         if (shipment_type == 'out' and self.shipments):
+    #             return
+    #     return super(Sale, self).create_shipment(shipment_type)
 
     def get_shipment_state(self):
         # Consider as sent if ANY shipment is done
@@ -57,3 +57,54 @@ class Sale(metaclass=PoolMeta):
                 if any(s for s in self.shipments if s.state in ('done', 'cancelled')):
                     return 'sent'
         return super(Sale, self).get_shipment_state()
+
+    @classmethod
+    def process(cls, sales):
+        pool = Pool()
+        SaleLine = pool.get('sale.line')
+        ShipmentOut = pool.get('stock.shipment.out')
+
+        super().process(sales)
+
+        for sale in sales:
+            if sale.shipment_state == 'sent' and sale.remaining_stock == 'manual':
+                shipments = [s for s in sale.shipments if s.state not in ('cancelled', 'done')]
+                ShipmentOut.cancel(shipments)
+                for line in sale.lines:
+                    moves = []
+                    skips = set(line.moves_ignored)
+                    skips.update(line.moves_recreated)
+                    for move in line.moves:
+                        if move.state == 'cancelled' and move not in skips:
+                            moves.append(move.id)
+                    if not moves:
+                        continue
+                    SaleLine.write([line], {
+                            'moves_ignored': [('add', moves)],
+                            })
+
+
+    #
+    #
+    #
+    # @classmethod
+    # def _process_invoice_shipment_states(cls, sales):
+    #     pool = Pool()
+    #     SaleLine = pool.get('sale.line')
+    #
+    #     super()._process_invoice_shipment_states(sales)
+    #
+    #     for sale in sales:
+    #         if sale.shipment_state == 'sent' and sale.remaining_stock == 'manual':
+    #             for line in sale.lines:
+    #                 moves_ignored = []
+    #                 skips = set(line.moves_ignored)
+    #                 skips.update(line.moves_recreated)
+    #                 for move in line.moves:
+    #                     if move in skips:
+    #                         continue
+    #                     moves_ignored.append(move.id)
+    #
+    #                 SaleLine.write([line], {
+    #                         'moves_ignored': [('add', moves_ignored)],
+    #                         })

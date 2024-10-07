@@ -25,7 +25,7 @@ class Test(unittest.TestCase):
     def test(self):
 
         # Install sale_remaining_stock
-        activate_modules('sale_remaining_stock')
+        activate_modules(['sale_remaining_stock', 'sale_credit_limit'])
 
         # Create company
         _ = create_company()
@@ -63,9 +63,11 @@ class Test(unittest.TestCase):
         supplier.save()
         customer = Party(name='Customer')
         customer.remaining_stock = 'create_shipment'
+        customer.credit_limit_amount = Decimal('100')
         customer.save()
         customer2 = Party(name='Customer2')
         customer2.remaining_stock = 'manual'
+        customer2.credit_limit_amount = Decimal('100')
         customer2.save()
 
         # Create product
@@ -136,9 +138,12 @@ class Test(unittest.TestCase):
         self.assertEqual(sale.state, 'processing')
         self.assertEqual(sale.shipment_state, 'waiting')
 
+        customer.reload()
+        self.assertEqual(customer.credit_amount, Decimal('50.00'))
+
         shipment, = sale.shipments
         shipment.click('draft')
-        move1, move2 = shipment.outgoing_moves
+        move1, _ = shipment.outgoing_moves
         move1.quantity = 1.0
         shipment.click('wait')
         shipment.click('assign_try')
@@ -147,16 +152,17 @@ class Test(unittest.TestCase):
         shipment.click('done')
         sale.reload()
         self.assertEqual(len(sale.shipments), 2)
-        line1, line2 = sale.lines
-        self.assertEqual(len(line1.moves_ignored), 0)
-        self.assertEqual(len(line2.moves_ignored), 0)
+
+        customer.reload()
+        self.assertEqual(customer.credit_amount, Decimal('50.00'))
 
         # Sale manual shipments
         sale = Sale()
         sale.party = customer2
         self.assertEqual(sale.remaining_stock, 'manual')
+        # change quantity from shipment
         sale.payment_term = payment_term
-        sale.invoice_method = 'order'
+        sale.invoice_method = 'shipment'
         sale_line = SaleLine()
         sale.lines.append(sale_line)
         sale_line.product = product
@@ -171,6 +177,9 @@ class Test(unittest.TestCase):
         self.assertEqual(sale.state, 'processing')
         self.assertEqual(sale.shipment_state, 'waiting')
 
+        customer2.reload()
+        self.assertEqual(customer2.credit_amount, Decimal('50.00'))
+
         shipment, = sale.shipments
         shipment.click('draft')
         move1, _ = shipment.outgoing_moves
@@ -182,59 +191,7 @@ class Test(unittest.TestCase):
         shipment.click('done')
         sale.reload()
         self.assertEqual(len(sale.shipments), 2)
-        self.assertEqual([s.state for s in sale.shipments], ['done', 'cancelled'])
-        self.assertEqual(sale.shipment_state, 'sent')
-        line1, line2 = sale.lines
-        self.assertEqual(len(line1.moves_ignored), 1)
-        m1, = line1.moves_ignored
-        self.assertEqual(m1.state, 'cancelled')
-        self.assertEqual(m1.quantity, 1.0)
-        self.assertEqual(len(line2.moves_ignored), 0)
-
-        # Sale manual shipments and shipment return
-        sale = Sale()
-        sale.party = customer2
-        sale.payment_term = payment_term
-        sale.invoice_method = 'order'
-        sale_line = SaleLine()
-        sale.lines.append(sale_line)
-        sale_line.product = product
-        sale_line.quantity = 2.0
-        sale_line = SaleLine()
-        sale.lines.append(sale_line)
-        sale_line.product = product
-        sale_line.quantity = -3.0
-        sale.click('quote')
-        sale.click('confirm')
-        sale.click('process')
-        self.assertEqual(sale.state, 'processing')
-        self.assertEqual(sale.shipment_state, 'waiting')
-
-        shipment, = sale.shipments
-        shipment.click('draft')
-        move1, = shipment.outgoing_moves
-        move1.quantity = 1.0
-        shipment.click('wait')
-        shipment.click('assign_try')
-        shipment.click('pick')
-        shipment.click('pack')
-        shipment.click('done')
-
-        sale.reload()
-        self.assertEqual(len(sale.shipments), 2)
-        self.assertEqual([s.state for s in sale.shipments], ['done', 'waiting'])
-        self.assertEqual(sale.shipment_state, 'partially shipped')
-
-        ship_return, = sale.shipment_returns
-        ship_return.click('receive')
-        ship_return.click('done')
-
-        sale.reload()
-        self.assertEqual([s.state for s in sale.shipments], ['done', 'cancelled'])
         self.assertEqual(sale.shipment_state, 'sent')
 
-        line1, _ = sale.lines
-        self.assertEqual(len(line1.moves_ignored), 1)
-        m1, = line1.moves_ignored
-        self.assertEqual(m1.state, 'cancelled')
-        self.assertEqual(m1.quantity, 1.0)
+        customer2.reload()
+        self.assertEqual(customer2.credit_amount, Decimal('40.00'))
