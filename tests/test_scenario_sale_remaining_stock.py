@@ -191,6 +191,36 @@ class Test(unittest.TestCase):
         self.assertEqual(m1.quantity, 1.0)
         self.assertEqual(len(line2.moves_ignored), 0)
 
+        # Sale manual shipments and cancelled
+        sale = Sale()
+        sale.party = customer2
+        self.assertEqual(sale.remaining_stock, 'manual')
+        sale.payment_term = payment_term
+        sale.invoice_method = 'order'
+        sale_line = SaleLine()
+        sale.lines.append(sale_line)
+        sale_line.product = product
+        sale_line.quantity = 2.0
+        sale_line = SaleLine()
+        sale.lines.append(sale_line)
+        sale_line.product = product
+        sale_line.quantity = 3.0
+        sale.click('quote')
+        sale.click('confirm')
+        sale.click('process')
+        self.assertEqual(sale.state, 'processing')
+        self.assertEqual(sale.shipment_state, 'waiting')
+
+        shipment, = sale.shipments
+        shipment.click('cancel')
+        sale.reload()
+
+        self.assertEqual(len(sale.shipments), 1)
+        self.assertEqual(sale.shipment_state, 'sent')
+        line1, line2 = sale.lines
+        self.assertEqual(len(line1.moves_ignored), 1)
+        self.assertEqual(len(line2.moves_ignored), 1)
+
         # Sale manual shipments and shipment return
         sale = Sale()
         sale.party = customer2
