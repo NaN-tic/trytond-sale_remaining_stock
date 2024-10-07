@@ -60,8 +60,11 @@ class Sale(metaclass=PoolMeta):
         super().process(sales)
 
         for sale in sales:
-            if sale.shipment_state == 'sent' and sale.remaining_stock == 'manual':
-                shipments = [s for s in sale.shipments if s.state not in ('cancelled', 'done')]
+            if (sale.shipment_state == 'sent'
+                    and sale.remaining_stock == 'manual'):
+                # cancel shipments and add to moves ignored
+                shipments = [s for s in sale.shipments
+                    if s.state not in ('cancelled', 'done')]
                 ShipmentOut.cancel(shipments)
                 for line in sale.lines:
                     moves = []
