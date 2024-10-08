@@ -3,8 +3,7 @@
 from trytond.model import fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
-
-__all__ = ['Sale']
+from trytond.transaction import Transaction
 
 
 class Sale(metaclass=PoolMeta):
@@ -39,33 +38,58 @@ class Sale(metaclass=PoolMeta):
             self.remaining_stock = (self.party.remaining_stock
                 if self.party.remaining_stock else remaining_stock)
 
-    def get_shipment_state(self):
-        # Consider as sent if ANY shipment is done
-        if (self.moves and self.remaining_stock == 'manual'):
-            if (self.shipments and self.shipment_returns):
-                if (any(s for s in self.shipments if s.state in ('done', 'cancelled')) and
-                        all(s.state in ('received', 'done', 'cancelled') for s in self.shipment_returns)):
-                    return 'sent'
-            elif self.shipments:
-                if any(s for s in self.shipments if s.state in ('done', 'cancelled')):
-                    return 'sent'
-        return super(Sale, self).get_shipment_state()
+    def create_shipment(self, shipment_type):
+        transaction = Transaction()
+        context = transaction.context
+
+        shipments = self.shipments
+
+        # if remaining_stock == manual, not grouping new shipments in case
+        # has done or cancelled shipments
+        skip_grouping = (self.remaining_stock == 'manual' and shipments
+            and any(s for s in self.shipments if s.state in ('done', 'cancelled')))
+        with transaction.set_context(skip_grouping=skip_grouping):
+            return super().create_shipment(shipment_type)
 
     @classmethod
-    def process(cls, sales):
+    def _process_shipment(cls, sales):
         pool = Pool()
         SaleLine = pool.get('sale.line')
         ShipmentOut = pool.get('stock.shipment.out')
 
-        super().process(sales)
+        super()._process_shipment(sales)
 
+        to_ignore = []
+        to_cancel = []
         for sale in sales:
-            if (sale.shipment_state == 'sent'
-                    and sale.remaining_stock == 'manual'):
-                # cancel shipments and add to moves ignored
+            if not sale.remaining_stock == 'manual':
+                continue
+
+            # Cancel shipments and add to moves ignored
+            if any(s for s in sale.shipments if s.state in ('done', 'cancelled')):
+                remaining_stock = set()
                 shipments = [s for s in sale.shipments
                     if s.state not in ('cancelled', 'done')]
-                ShipmentOut.cancel(shipments)
+                if shipments:
+                    # Cancel if all outgoing moves are linked to sales where
+                    # remaining_stock == 'manual'
+                    for shipment in sale.shipments:
+                        for move in shipment.outgoing_moves:
+                            if move.origin and isinstance(move.origin, SaleLine):
+                                remaining_stock.add(move.origin.sale.remaining_stock)
+                    if len(remaining_stock) != 1:
+                        continue
+
+                    to_cancel += shipments
+                to_ignore.append(sale)
+
+        # cancel customer shipments
+        if to_cancel:
+            ShipmentOut.cancel(to_cancel)
+
+        if to_ignore:
+            to_write = []
+            for sale in to_ignore:
                 for line in sale.lines:
                     moves = []
                     skips = set(line.moves_ignored)
@@ -75,6 +99,8 @@ class Sale(metaclass=PoolMeta):
                             moves.append(move.id)
                     if not moves:
                         continue
-                    SaleLine.write([line], {
+                    to_write.extend(([line], {
                             'moves_ignored': [('add', moves)],
-                            })
+                            }))
+            if to_write:
+                SaleLine.write(*to_write)

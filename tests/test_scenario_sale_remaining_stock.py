@@ -252,7 +252,7 @@ class Test(unittest.TestCase):
 
         sale.reload()
         self.assertEqual(len(sale.shipments), 2)
-        self.assertEqual([s.state for s in sale.shipments], ['done', 'waiting'])
+        self.assertEqual([s.state for s in sale.shipments], ['done', 'cancelled'])
         self.assertEqual(sale.shipment_state, 'partially shipped')
 
         ship_return, = sale.shipment_returns
