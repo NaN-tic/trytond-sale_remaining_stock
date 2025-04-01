@@ -38,7 +38,6 @@ class Sale(metaclass=PoolMeta):
 
     def create_shipment(self, shipment_type):
         transaction = Transaction()
-        context = transaction.context
 
         shipments = self.shipments
 
