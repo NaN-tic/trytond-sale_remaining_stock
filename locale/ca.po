@@ -104,7 +104,7 @@ msgstr "Crea albarà"
 
 msgctxt "selection:party.party,remaining_stock:"
 msgid "Manual"
-msgstr "Tercer estoc restant"
+msgstr "Manual"
 
 msgctxt "selection:party.remaining.stock,remaining_stock:"
 msgid "Create Shipment"
