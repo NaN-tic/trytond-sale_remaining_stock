@@ -49,12 +49,12 @@ class Sale(metaclass=PoolMeta):
             return super().create_shipment(shipment_type)
 
     @classmethod
-    def _process_shipment(cls, sales):
+    def _process_fulfillment(cls, sales):
         pool = Pool()
         SaleLine = pool.get('sale.line')
         ShipmentOut = pool.get('stock.shipment.out')
 
-        super()._process_shipment(sales)
+        super()._process_fulfillment(sales)
 
         to_ignore = []
         to_cancel = []
