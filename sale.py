@@ -65,8 +65,13 @@ class Sale(metaclass=PoolMeta):
             # Cancel shipments and add to moves ignored
             if any(s for s in sale.shipments if s.state in ('done', 'cancelled')):
                 remaining_stock = set()
+                closed_warehouses = {
+                    s.warehouse for s in sale.shipments
+                    if s.state in ('done', 'cancelled')
+                    }
                 shipments = [s for s in sale.shipments
-                    if s.state not in ('cancelled', 'done')]
+                    if (s.state not in ('cancelled', 'done')
+                        and s.warehouse in closed_warehouses)]
                 if shipments:
                     # Cancel if all outgoing moves are linked to sales where
                     # remaining_stock == 'manual'
