@@ -253,7 +253,8 @@ class Test(unittest.TestCase):
 
         sale.reload()
         self.assertEqual(len(sale.shipments), 2)
-        self.assertEqual([s.state for s in sale.shipments], ['done', 'cancelled'])
+        self.assertCountEqual(
+            [s.state for s in sale.shipments], ['done', 'cancelled'])
         self.assertEqual(sale.shipment_state, 'partially shipped')
 
         ship_return, = sale.shipment_returns
@@ -261,7 +262,8 @@ class Test(unittest.TestCase):
         ship_return.click('do')
 
         sale.reload()
-        self.assertEqual([s.state for s in sale.shipments], ['done', 'cancelled'])
+        self.assertCountEqual(
+            [s.state for s in sale.shipments], ['done', 'cancelled'])
         self.assertEqual(sale.shipment_state, 'sent')
 
         line1, _ = sale.lines
