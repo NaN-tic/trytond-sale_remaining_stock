@@ -170,3 +170,11 @@ msgstr "Partner fennmaradó készlete"
 msgctxt "model:sale.configuration.remaining.stock,string:"
 msgid "Sale Configuration Remaining Stock"
 msgstr "Értékesítési fennmaradó készlet beállítása"
+
+msgctxt "help:sale.configuration,remaining_stock:"
+msgid "Allow create new pending shipments to delivey"
+msgstr "Új, szállításra váró szállítmányok létrehozásának engedélyezése"
+
+msgctxt "help:sale.configuration.remaining.stock,remaining_stock:"
+msgid "Allow create new pending shipments to delivey"
+msgstr "Új, szállításra váró szállítmányok létrehozásának engedélyezése"
